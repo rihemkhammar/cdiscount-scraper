@@ -1,1 +1,12 @@
-09-Jan-26 | 02:24:50 - INFO - il ya 0 les catégorie  Moins de 12" contient (1162) produit
+11-Jan-26 | 20:45:45 - INFO - Click OK : cookies_button
+11-Jan-26 | 20:45:45 - INFO - Click OK : delete_all_filtre
+11-Jan-26 | 20:45:51 - INFO - Click OK : taille_label
+11-Jan-26 | 20:45:52 - INFO - Click OK : douze_pouces
+11-Jan-26 | 20:45:54 - INFO - Récupération OK : category -> Moins de 12"
+11-Jan-26 | 20:45:54 - INFO - Récupération OK : number_products -> (1153)
+11-Jan-26 | 20:45:54 - INFO - Count OK : category -> 1
+11-Jan-26 | 20:45:54 - INFO - Il y a 1 filtre(s), la catégorie 'Moins de 12"' contient (1153) produit(s).
+11-Jan-26 | 20:45:54 - INFO - Count OK : product-list -> 62
+11-Jan-26 | 20:45:54 - INFO - Count OK : current_page -> 0
+11-Jan-26 | 20:45:54 - INFO - Count OK : category -> 1
+11-Jan-26 | 20:45:54 - INFO - Il y 1 Filtre(s) sur la page 1 qui contient 62 éléments.

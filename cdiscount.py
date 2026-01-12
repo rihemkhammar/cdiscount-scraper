@@ -1,6 +1,6 @@
 """x - fonction pour changer les critéres (filtre)
-- fonction pour le loop Item
-- fonction pour l'extraction des donnèes
+xfonction pour le loop Item
+x fonction pour l'extraction des donnèes
 - fonction pour exporter sous Excel
 - fonction pour la pagination
 """
@@ -99,13 +99,15 @@ def get_all(page, df, name, timeout=10000):
         raise
 
 
-def loop_item(page, df):
+def loop_item(page,df):
     item_data = []
     items = get_all(page, df, "product-list")
-    current_page = get_count_by_name(page, df, "current_page")
+
+    current_page = get_text_by_name(page, df, "current_page")
+
     nbr_filtre = get_count_by_name(page, df, "category")
 
-    logging.info(f"Il y {nbr_filtre} Filtre(s) sur la page {current_page + 1} qui contient {len(items)} éléments.")
+    logging.info(f"Il y {nbr_filtre} Filtre(s) sur la page {current_page} qui contient {len(items)} éléments.")
 
     for item in items:
         # Link
@@ -136,15 +138,68 @@ def loop_item(page, df):
         product_details = {
             "url": link,
             "title": title,
-            "prix_actuel": prix_actuel,
+            "prix": prix_actuel,
             "ancien_prix": ancien_prix
         }
         item_data.append(product_details)
 
-    # Affiche les résultats pour debug
-    print(item_data)
     return item_data
 
+
+def calcul_prix_final(s):
+    if s is None:  # ou pd.isna(s)
+        return None
+    s = s.replace(" ", "")  # retirer les espaces
+    # Extraire le prix
+    prix_str = s.split("€")[0].replace(",", ".")
+    prix = float(prix_str)
+
+    # Vérifier si remise existe
+    if "-" in s:
+        remise_str = s.split("-")[1].replace("%", "")
+        remise = float(remise_str) / 100
+    else:
+        remise = 0.0
+
+    return round(prix * (1 - remise), 2)
+
+
+def export_to_excel(produits):
+
+    df = pd.DataFrame(produits)
+    #Modifier la colone prix
+    if "prix" in df.columns:
+        df["prix"] = df["prix"].str.replace("€", ",", regex=False)
+    else:
+        logging.error("la colonne 'prix' n'existe pas")
+        raise KeyError
+    if "ancien_prix" in df.columns:
+         df["ancien_prix_remise"] = df["ancien_prix"].apply(calcul_prix_final)
+    else:
+         logging.error("la colonne 'ancien_prix' n'existe pas")
+         raise KeyError
+
+    #Enregistrer la DataFrame
+    try:
+        df.to_excel("cdiscount.xlsx", index=False)
+        logging.info("le DataFrame complet a bien enregistré.")
+    except ValueError as e:
+        logging.error(f"Le DataFrame n'a pas été enregistre:{e}")
+        raise
+
+def pagination(page):
+
+
+    try:
+        page.wait_for_selector(f"xpath=/html/body/div[3]/div/section/div[1]/div[1]/div[2]/div[2]/div[2]/nav/div[3]/button", timeout=10000)
+        page.locator(f"xpath=/html/body/div[3]/div/section/div[1]/div[1]/div[2]/div[2]/div[2]/nav/div[3]/button").click()
+        page.wait_for_selector("xpath=/html/body/div[3]/div/section/div[1]/div[1]/div[2]/div[2]/div[1]/section")
+        page.wait_for_timeout(2000)
+        logging.info(f"Click OK : suivant")
+        return True
+    except PlaywrightTimeoutError as e:
+        logging.error(f"Impossible de cliquer sur suivant : {e}")
+        return False
 
 
 

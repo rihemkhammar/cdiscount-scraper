@@ -1,8 +1,10 @@
-import selectors
+
 
 from playwright.sync_api import sync_playwright
-from cdiscount import load_selectors, click_by_name, get_text_by_name, get_count_by_name, change_criterias, loop_item, \
-    export_to_excel, pagination
+from cdiscount import   change_criterias, loop_item
+from excel_utils import export_to_excel
+from pagination import pagination
+from path_selectors import load_selectors
 
 
 def main():
@@ -33,8 +35,6 @@ def main():
             if not pagination(page):
                 break
 
-        # Exporter les données Excel
-        #export_to_excel(all_items)
         #return page
         browser.close()
 
